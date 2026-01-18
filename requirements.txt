@@ -1,0 +1,24 @@
+﻿# Core ML Libraries
+torch>=2.6.0
+transformers>=4.40.0
+datasets>=2.18.0
+
+# Data Processing
+pandas>=2.2.0
+numpy>=1.26.0
+openpyxl>=3.0.0
+
+# Training & Optimization
+accelerate>=0.27.0
+tensorboard>=2.16.0
+
+# Utilities
+tqdm>=4.67.0
+python-dotenv>=1.0.0
+
+# Evaluation
+scikit-learn>=1.4.0
+
+# Notebook (optional)
+jupyter>=1.1.0
+ipython>=8.20.0
