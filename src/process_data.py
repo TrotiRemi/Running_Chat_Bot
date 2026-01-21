@@ -65,7 +65,8 @@ def extract_features(filename):
             features['training_per_week'] = training
     
     # ========== TEMPS CIBLE ==========
-    time_match = re.search(r'(\d+)h(\d{1,2})m', name_clean)
+    # Chercher XhYm ou XhY (ex: 2h15m, 2h15, 3h, 4h30)
+    time_match = re.search(r'(\d+)h(\d{1,2})', name_clean)
     if time_match:
         hours = time_match.group(1)
         minutes = time_match.group(2)
