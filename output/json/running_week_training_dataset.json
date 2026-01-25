@@ -1,0 +1,23 @@
+{
+  "metadata": {
+    "project": "Running Weekly Training Schedule Prediction",
+    "description": "Optimized & augmented dataset for week prediction",
+    "version": "2.1",
+    "augmentation_factor": 2,
+    "total_training_pairs": 0,
+    "statistics": {
+      "by_level": {},
+      "by_goal": {},
+      "by_training_days": {},
+      "by_duration": {},
+      "ocr_corrections": 0
+    },
+    "data_quality": {
+      "complete_weeks": 0,
+      "avg_distance_total": 0,
+      "unique_programs": 0,
+      "cleaned_entries": 0
+    }
+  },
+  "training_data": []
+}
