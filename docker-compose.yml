@@ -1,0 +1,44 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=True
+      - MODEL_PATH=/app/output/model/running_plan_finetuned_model.pth
+    volumes:
+      - ./output:/app/output
+      - ./Data:/app/Data
+      - ./backend/app.py:/app/app.py
+    command: python app.py
+    networks:
+      - running-plan-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://backend:5000
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - running-plan-network
+    stdin_open: true
+    tty: true
+
+networks:
+  running-plan-network:
+    driver: bridge

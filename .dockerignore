@@ -1,0 +1,28 @@
+# Docker & Compose
+docker-compose.yml
+.dockerignore
+Dockerfile
+.docker
+
+# Node
+frontend/node_modules
+frontend/.next
+frontend/out
+frontend/dist
+
+# Python
+backend/__pycache__
+backend/*.pyc
+backend/.venv
+backend/venv
+
+# Git
+.git
+.gitignore
+
+# Misc
+.DS_Store
+*.log
+.env.local
+start.bat
+start.sh
