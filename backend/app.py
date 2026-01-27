@@ -178,6 +178,14 @@ def clean_content(content: str) -> str:
 def enforce_week_structure(text, max_rest=3):
     """Formate la réponse en structure de semaine avec sauts de ligne"""
     text = text.replace("<|endoftext|>", "").strip()
+
+    # Normaliser les retours à la ligne venant du modèle:
+    # - vrais retours (\r\n)
+    # - séquence littérale "\\n" (souvent due à un double-échappement)
+    # - token "/n" utilisé comme marqueur de nouvelle ligne (si isolé)
+    text = text.replace("\r\n", "\n")
+    text = text.replace("\\n", "\n")
+    text = re.sub(r'(^|[ \t])/n(?=[ \t]|$)', r'\1\n', text)
     
     # Remplacer les noms de jours anglais par français si présents
     text = text.replace("Monday", "Lundi")

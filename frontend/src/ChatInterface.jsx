@@ -6,7 +6,7 @@ function ChatInterface() {
   const [messages, setMessages] = useState([
     {
       id: 1,
-      text: "Bonjour! Je suis votre assistant de plans d'entraînement. Comment puis-je vous aider?",
+      text: "Bonjour. Décrivez votre objectif (distance, date, niveau) et je vous propose un plan d'entraînement.",
       sender: 'bot',
       timestamp: new Date()
     }
@@ -23,6 +23,14 @@ function ChatInterface() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  const normalizeNewlines = (text) => {
+    if (typeof text !== 'string') return '';
+    return text
+      .replace(/\r\n/g, '\n')
+      .replace(/\\n/g, '\n')
+      .replace(/(^|[ \t])\/n(?=[ \t]|$)/g, '$1\n');
+  };
 
   const sendMessage = async (e) => {
     e.preventDefault();
@@ -44,7 +52,21 @@ function ChatInterface() {
 
     try {
       // Envoyer au backend
-      const apiUrl = 'http://localhost:5000';
+      const defaultApiUrl =
+        typeof window !== 'undefined'
+          ? `${window.location.protocol}//${window.location.hostname}:5000`
+          : 'http://localhost:5000';
+
+      let apiUrl = process.env.REACT_APP_API_URL || defaultApiUrl;
+      if (typeof window !== 'undefined') {
+        try {
+          const parsed = new URL(apiUrl);
+          if (parsed.hostname === 'backend') apiUrl = defaultApiUrl;
+        } catch {
+          // ignore
+        }
+      }
+
       const response = await axios.post(`${apiUrl}/api/chat`, {
         message: userMessage.text
       });
@@ -52,7 +74,7 @@ function ChatInterface() {
       // Ajouter la réponse du bot
       const botMessage = {
         id: messages.length + 2,
-        text: response.data.bot_response,
+        text: normalizeNewlines(response.data.bot_response),
         sender: 'bot',
         timestamp: new Date()
       };
@@ -76,8 +98,8 @@ function ChatInterface() {
   return (
     <div className="chat-container">
       <div className="chat-header">
-        <h1>🏃 Running Plan Assistant</h1>
-        <p>Votre assistant pour les plans d'entraînement</p>
+        <h1>Running Plan Assistant</h1>
+        <p>Plans d'entraînement, simplement.</p>
       </div>
 
       <div className="chat-messages">
@@ -96,18 +118,14 @@ function ChatInterface() {
         {isLoading && (
           <div className="message bot">
             <div className="message-content loading">
-              <div className="loading-dots">
-                <span></span>
-                <span></span>
-                <span></span>
-              </div>
+              <span className="loading-text">Réponse en cours…</span>
             </div>
           </div>
         )}
 
         {error && (
           <div className="error-message">
-            <p>⚠️ {error}</p>
+            <p>{error}</p>
           </div>
         )}
 
@@ -120,7 +138,7 @@ function ChatInterface() {
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Écrivez votre question..."
+            placeholder="Écrivez votre message"
             disabled={isLoading}
             className="chat-input"
           />
@@ -128,8 +146,9 @@ function ChatInterface() {
             type="submit" 
             disabled={isLoading || !inputValue.trim()}
             className="send-button"
+            aria-label="Envoyer"
           >
-            {isLoading ? '⏳' : '➤'}
+            {isLoading ? '...' : 'Envoyer'}
           </button>
         </div>
       </form>

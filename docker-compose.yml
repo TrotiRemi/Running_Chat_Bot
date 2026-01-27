@@ -30,7 +30,9 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - REACT_APP_API_URL=http://backend:5000
+      # Le code React s'exécute dans le navigateur: il doit appeler l'hôte (port publié),
+      # pas le hostname interne Docker.
+      - REACT_APP_API_URL=http://localhost:5000
     depends_on:
       backend:
         condition: service_healthy
